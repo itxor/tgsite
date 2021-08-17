@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 	tgbot "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/itxor/tgsite/configs/tg"
+	"github.com/itxor/tgsite/internal/config"
 	"log"
 )
 
 type TelegramChannelService struct {
 	bot *tgbot.BotAPI
-	config *tg.TelegramConfig
+	config *config.TelegramConfig
 }
 
 // formatting определяет единицу форматированния переданного текста
@@ -29,7 +29,7 @@ type postInfo struct {
 
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
 func NewTelegramChannelService() (*TelegramChannelService, error) {
-	cfg, err := tg.New()
+	cfg, err := config.New()
 	if err != nil {
 		log.Printf("Ошибка при инициализации конфига: %v", err)
 	}

@@ -1,4 +1,4 @@
-package tg
+package config
 
 import (
 	"errors"
@@ -13,7 +13,7 @@ type TelegramConfig struct {
 
 func New() (*TelegramConfig, error) {
 	var tgCong TelegramConfig
-	_, err := toml.DecodeFile("configs/tg/config.toml", &tgCong)
+	_, err := toml.DecodeFile("configs/telegram.toml", &tgCong)
 	if err != nil {
 		log.Printf("Error for reading local config: %v", err)
 

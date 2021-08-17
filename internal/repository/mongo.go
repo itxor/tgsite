@@ -4,17 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/itxor/tgsite/internal/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
 )
 
-type Config struct {
-	URL string
-}
+func NewMongoDB() (*mongo.Client, error) {
+	cfg, err := config.NewDatabaseConfig()
+	if err != nil {
+		msg := fmt.Sprintf("Ошибка при чтении конфига для подключения к mongodb: %s", err.Error())
+		log.Printf(msg)
 
-func NewMongoDB(cfg Config) (*mongo.Client, error) {
+		return nil, errors.New(msg)
+	}
+
 	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.URL))
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при попытке подключения к mongoDB: %s", err.Error())
