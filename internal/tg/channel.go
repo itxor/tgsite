@@ -13,11 +13,6 @@ type TelegramChannelService struct {
 	config *tg.TelegramConfig
 }
 
-const (
-	FormattingTypePre = "pre"
-
-)
-
 // formatting определяет единицу форматированния переданного текста
 type formatting struct {
 	formattingType string
