@@ -10,8 +10,8 @@ type Repository struct {
 	Post
 }
 
-func NewRepository(db *mongo.Client) *Repository {
-	return &Repository{
+func NewRepository(db *mongo.Client) Repository {
+	return Repository{
 		Post: NewPostMongo(db),
 	}
 }

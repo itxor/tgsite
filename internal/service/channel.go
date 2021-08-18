@@ -1,16 +1,19 @@
-package tg
+package service
 
 import (
 	"errors"
 	"fmt"
 	tgbot "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/itxor/tgsite/internal/config"
+	"github.com/itxor/tgsite/internal/repository"
 	"log"
+	"os"
 )
 
 type TelegramChannelService struct {
 	bot *tgbot.BotAPI
 	config *config.TelegramConfig
+	repo repository.Repository
 }
 
 // formatting определяет единицу форматированния переданного текста
@@ -20,6 +23,7 @@ type formatting struct {
 	length int
 }
 
+// postInfo определяет содержимое поста
 type postInfo struct {
 	text string
 	options []formatting
@@ -28,7 +32,7 @@ type postInfo struct {
 }
 
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
-func NewTelegramChannelService() (*TelegramChannelService, error) {
+func NewTelegramChannelService(repository repository.Repository) (*TelegramChannelService, error) {
 	cfg, err := config.New()
 	if err != nil {
 		log.Printf("Ошибка при инициализации конфига: %v", err)
@@ -46,11 +50,27 @@ func NewTelegramChannelService() (*TelegramChannelService, error) {
 	return &TelegramChannelService{
 		bot: bot,
 		config: cfg,
+		repo: repository,
 	}, nil
 }
 
+// StartUpdatesLoop запускает цикл прослушивания и обработки сообщений из telegram-каналов
+func (s *TelegramChannelService) StartUpdatesLoop() {
+	updatesChannel, err := s.getUpdates()
+	if err != nil {
+		os.Exit(1)
+	}
+
+	for update := range updatesChannel {
+		err := s.handleMessage(update)
+		if err != nil {
+			os.Exit(1)
+		}
+	}
+}
+
 // GetUpdates получает канал обновлений бота
-func (s *TelegramChannelService) GetUpdates() (tgbot.UpdatesChannel, error) {
+func (s *TelegramChannelService) getUpdates() (tgbot.UpdatesChannel, error) {
 	u := tgbot.NewUpdate(0)
 	u.Timeout = 60
 
@@ -65,7 +85,7 @@ func (s *TelegramChannelService) GetUpdates() (tgbot.UpdatesChannel, error) {
 }
 
 // HandleMessage обрабатывает сообщение, полученное из канала обновлений
-func (s *TelegramChannelService) HandleMessage(message tgbot.Update) error {
+func (s *TelegramChannelService) handleMessage(message tgbot.Update) error {
 	if message.ChannelPost == nil {
 		return nil
 	}
