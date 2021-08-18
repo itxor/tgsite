@@ -11,13 +11,13 @@ import (
 	"time"
 )
 
-func NewMongoDB() (*mongo.Client, error) {
+func NewMongoDB() (*mongo.Client, context.Context, error) {
 	cfg, err := config.NewDatabaseConfig()
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при чтении конфига для подключения к mongodb: %s", err.Error())
 		log.Printf(msg)
 
-		return nil, errors.New(msg)
+		return nil, nil, errors.New(msg)
 	}
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.URL))
@@ -25,7 +25,7 @@ func NewMongoDB() (*mongo.Client, error) {
 		msg := fmt.Sprintf("Ошибка при попытке подключения к mongoDB: %s", err.Error())
 		log.Printf(msg)
 
-		return nil, errors.New(msg)
+		return nil, nil, errors.New(msg)
 	}
 
 	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
@@ -34,9 +34,9 @@ func NewMongoDB() (*mongo.Client, error) {
 		msg := fmt.Sprintf("Ошибка при попытке загрузить контекст: %s", err.Error())
 		log.Printf(msg)
 
-		return nil, errors.New(msg)
+		return nil, nil, errors.New(msg)
 	}
 	//defer client.Disconnect(ctx)
 
-	return client, nil
+	return client, ctx, nil
 }

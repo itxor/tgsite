@@ -108,6 +108,11 @@ func (s *TelegramChannelService) handleMessage(message tgbot.Update) error {
 		}
 	}
 
+	_, err = s.repo.CreatePost(*post)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

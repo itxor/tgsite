@@ -1,19 +1,33 @@
 package repository
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
+	"github.com/itxor/tgsite/internal/model"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type PostMongo struct {
 	db *mongo.Client
+	ctx context.Context
 }
 
-func NewPostMongo(db *mongo.Client) *PostMongo {
+// NewPostMongo создаёт новый экземпляр PostMongo
+func NewPostMongo(db *mongo.Client, ctx context.Context) *PostMongo {
 	return &PostMongo{
 		db: db,
+		ctx: ctx,
 	}
 }
 
-func (s *PostMongo) CreatePost() (int, error) {
-	return 1, nil
+// CreatePost сохраняет пост в базу
+func (s *PostMongo) CreatePost(post model.ChannelPost) (*mongo.InsertOneResult, error) {
+	collection := s.db.Database(Database).Collection(CollectionPosts)
+	insertResult, err := collection.InsertOne(s.ctx, post)
+	if err != nil {
+		return nil, err
+	}
+
+	return insertResult, nil
 }
 
 

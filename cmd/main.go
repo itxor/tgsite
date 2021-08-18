@@ -7,13 +7,13 @@ import (
 )
 
 func main() {
-	db, err := repository.NewMongoDB()
+	db, ctx, err := repository.NewMongoDB()
 	if err != nil {
 		os.Exit(1)
 	}
 
 	s, err := service.NewService(
-		repository.NewRepository(db),
+		repository.NewRepository(db, ctx),
 	)
 	if err != nil {
 		os.Exit(1)

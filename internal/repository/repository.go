@@ -1,17 +1,26 @@
 package repository
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
+	"github.com/itxor/tgsite/internal/model"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+const (
+	Database = "channels"
+	CollectionPosts = "posts"
+)
 
 type Post interface {
-	CreatePost () (int, error)
+	CreatePost(post model.ChannelPost) (*mongo.InsertOneResult, error)
 }
 
 type Repository struct {
 	Post
 }
 
-func NewRepository(db *mongo.Client) Repository {
+func NewRepository(db *mongo.Client, ctx context.Context) Repository {
 	return Repository{
-		Post: NewPostMongo(db),
+		Post: NewPostMongo(db, ctx),
 	}
 }
