@@ -7,11 +7,11 @@ import (
 )
 
 type TelegramConfig struct {
-	TgBotToken     string
-	TgBotUserName  string
+	TgBotToken    string `toml:"tg_bot_token"`
+	TgBotUsername string `toml:"tg_bot_username"`
 }
 
-func New() (*TelegramConfig, error) {
+func NewTelegramConfig() (*TelegramConfig, error) {
 	var tgCong TelegramConfig
 	_, err := toml.DecodeFile("configs/telegram.toml", &tgCong)
 	if err != nil {

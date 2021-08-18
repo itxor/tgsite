@@ -7,7 +7,7 @@ import (
 )
 
 type DatabaseConfig struct {
-	URL string
+	URL string `toml:"mongo_url"`
 }
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {

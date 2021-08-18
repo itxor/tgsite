@@ -5,6 +5,7 @@ import (
 	"fmt"
 	tgbot "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/itxor/tgsite/internal/config"
+	"github.com/itxor/tgsite/internal/model"
 	"github.com/itxor/tgsite/internal/repository"
 	"log"
 	"os"
@@ -16,24 +17,9 @@ type TelegramChannelService struct {
 	repo repository.Repository
 }
 
-// formatting определяет единицу форматированния переданного текста
-type formatting struct {
-	formattingType string
-	offset int
-	length int
-}
-
-// postInfo определяет содержимое поста
-type postInfo struct {
-	text string
-	options []formatting
-	stickerURL string
-	voiceURL string
-}
-
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
 func NewTelegramChannelService(repository repository.Repository) (*TelegramChannelService, error) {
-	cfg, err := config.New()
+	cfg, err := config.NewTelegramConfig()
 	if err != nil {
 		log.Printf("Ошибка при инициализации конфига: %v", err)
 	}
@@ -90,30 +76,36 @@ func (s *TelegramChannelService) handleMessage(message tgbot.Update) error {
 		return nil
 	}
 
-	postInfo := new(postInfo)
+	post := new(model.ChannelPost)
 	var err error
 
 	if "" != message.ChannelPost.Text {
-		postInfo.text = message.ChannelPost.Text
+		post.Content.Text = message.ChannelPost.Text
 	}
 
 	if message.ChannelPost.Entities != nil {
-		postInfo.options = s.getTextFormatting(message)
+		post.Content.Options = s.getTextFormatting(message)
 	}
 
 	if message.ChannelPost.Sticker != nil {
-		postInfo.stickerURL, err = s.getStickerURL(message)
+		post.Content.StickerURL, err = s.getStickerURL(message)
 		if err != nil {
 			return err
 		}
 	}
 
 	if message.ChannelPost.Voice != nil {
-		postInfo.voiceURL, err = s.getVoiceURL(message)
+		post.Content.VoiceURL, err = s.getVoiceURL(message)
 		if err != nil {
 			return err
 		}
+	}
 
+	if message.ChannelPost.Photo != nil {
+		post.Content.Photo, err = s.getPhoto(message)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -158,16 +150,41 @@ func (s *TelegramChannelService) getVoiceURL(message tgbot.Update) (string, erro
 }
 
 // getTextFormatting возвращает массив с набором форматирования текста
-func (s *TelegramChannelService) getTextFormatting(message tgbot.Update) []formatting {
-	options := make([]formatting, len(*(message.ChannelPost.Entities)))
+func (s *TelegramChannelService) getTextFormatting(message tgbot.Update) []model.Formatting {
+	options := make([]model.Formatting, len(*(message.ChannelPost.Entities)))
 	for _, entity := range *(message.ChannelPost.Entities) {
-		option := formatting{
-			formattingType: entity.Type,
-			offset:         entity.Offset,
-			length:         entity.Length,
+		option := model.Formatting{
+			FormattingType: entity.Type,
+			Offset:         entity.Offset,
+			Length:         entity.Length,
 		}
 		options = append(options, option)
 	}
 
 	return options
+}
+
+// getPhoto возвращает набор изображения в нескольких отресайзенных копиях
+func (s *TelegramChannelService) getPhoto(message tgbot.Update) ([]model.Photo, error) {
+	photos := make([]model.Photo, len(*(message.ChannelPost.Photo)))
+	for _, entity := range *(message.ChannelPost.Photo) {
+		link, err := s.getFileLink(entity.FileID)
+		if err != nil {
+			msg := fmt.Sprintf("Не удалось получить ссылку на изображение: %s", err.Error())
+			log.Printf(msg)
+
+			return nil, errors.New(msg)
+		}
+
+		photo := model.Photo{
+			URL:      link,
+			Width:    entity.Width,
+			Height:   entity.Height,
+			FileSize: entity.FileSize,
+		}
+
+		photos = append(photos, photo)
+	}
+
+	return photos, nil
 }

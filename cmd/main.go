@@ -21,4 +21,3 @@ func main() {
 
 	s.Channel.StartUpdatesLoop()
 }
-
