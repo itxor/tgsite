@@ -41,7 +41,7 @@ func NewTelegramChannelService(repository repository.Repository) (*TelegramChann
 }
 
 // StartUpdatesLoop запускает цикл прослушивания и обработки сообщений из telegram-каналов
-func (s *TelegramChannelService) StartUpdatesLoop() {
+func (s *TelegramChannelService) StartUpdatesLoop() error {
 	updatesChannel, err := s.getUpdates()
 	if err != nil {
 		os.Exit(1)
@@ -50,9 +50,11 @@ func (s *TelegramChannelService) StartUpdatesLoop() {
 	for update := range updatesChannel {
 		err := s.handleMessage(update)
 		if err != nil {
-			os.Exit(1)
+			return err
 		}
 	}
+
+	return nil
 }
 
 // GetUpdates получает канал обновлений бота
@@ -72,7 +74,7 @@ func (s *TelegramChannelService) getUpdates() (tgbot.UpdatesChannel, error) {
 
 // HandleMessage обрабатывает сообщение, полученное из канала обновлений
 func (s *TelegramChannelService) handleMessage(message tgbot.Update) error {
-	if message.ChannelPost == nil {
+	if message.Message == nil && message.ChannelPost == nil {
 		return nil
 	}
 

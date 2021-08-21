@@ -7,14 +7,12 @@ import (
 	"github.com/itxor/tgsite/internal/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 func NewMongoDB() (*mongo.Client, context.Context, error) {
 	cfg, err := config.NewDatabaseConfig()
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при чтении конфига для подключения к mongodb: %s", err.Error())
-		log.Printf(msg)
 
 		return nil, nil, errors.New(msg)
 	}
@@ -22,7 +20,6 @@ func NewMongoDB() (*mongo.Client, context.Context, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.URL))
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при попытке подключения к mongoDB: %s", err.Error())
-		log.Printf(msg)
 
 		return nil, nil, errors.New(msg)
 	}
@@ -31,7 +28,6 @@ func NewMongoDB() (*mongo.Client, context.Context, error) {
 	err = client.Connect(ctx)
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при попытке загрузить контекст: %s", err.Error())
-		log.Printf(msg)
 
 		return nil, nil, errors.New(msg)
 	}
