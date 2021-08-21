@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  go:
+    container_name: go
+    env_file:
+      - .env
+    build: docker/go
+    working_dir: /go/src/tgsite
+    volumes:
+      - .:/go/src/tgsite
+    networks:
+      - app
+    depends_on:
+      - mongo
+
+  migrate:
+    build: docker/migrate
+    container_name: migrate
+    working_dir: /go/src/tgsite
+    volumes:
+      - .:/go/src/tgsite
+    networks:
+      - app
+
+  mongo:
+    image: mongo
+    env_file:
+      - .env
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    networks:
+      - app
+
+  mongo-express:
+    image: mongo-express
+    env_file:
+      - .env
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_EXPRESS_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_EXPRESS_PASSWORD}
+      ME_CONFIG_MONGODB_URL: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:${MONGO_PORT}/"
+    depends_on:
+      - mongo
+    networks:
+      - app
+
+networks:
+  app:
