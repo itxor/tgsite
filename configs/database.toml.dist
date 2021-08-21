@@ -1,0 +1,1 @@
+mongo_url = "mongodb://test:test@mongo:27017"
