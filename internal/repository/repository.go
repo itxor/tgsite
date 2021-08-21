@@ -8,7 +8,6 @@ import (
 
 const (
 	Database = "channels"
-	CollectionPosts = "posts"
 )
 
 type Post interface {
@@ -21,6 +20,6 @@ type Repository struct {
 
 func NewRepository(db *mongo.Client, ctx context.Context) Repository {
 	return Repository{
-		Post: NewPostMongo(db, ctx),
+		Post: NewPostMongo(ctx, db),
 	}
 }

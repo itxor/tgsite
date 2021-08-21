@@ -21,14 +21,14 @@ type PostContent struct {
 	Options    []Formatting `bson:"options"`
 	StickerURL string       `bson:"sticker_url"`
 	VoiceURL   string       `bson:"voice_url"`
-	Photo     []Photo     `bson:"photo"`
+	Photo      []Photo      `bson:"photo"`
 }
 
 // ChannelPost определяет пост, отправленный в канал
 type ChannelPost struct {
-	Id        int         `bson:"id"`
 	MessageId int         `bson:"message_id"`
 	Date      int         `bson:"date"`
 	ChatId    int         `bson:"chat_id"`
 	Content   PostContent `bson:"post_contents"`
+	ChatName  string      `bson:"chat_name"`
 }

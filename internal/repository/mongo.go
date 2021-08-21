@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"time"
 )
 
 func NewMongoDB() (*mongo.Client, context.Context, error) {
@@ -28,7 +27,7 @@ func NewMongoDB() (*mongo.Client, context.Context, error) {
 		return nil, nil, errors.New(msg)
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx := context.Background()
 	err = client.Connect(ctx)
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при попытке загрузить контекст: %s", err.Error())
@@ -36,7 +35,6 @@ func NewMongoDB() (*mongo.Client, context.Context, error) {
 
 		return nil, nil, errors.New(msg)
 	}
-	//defer client.Disconnect(ctx)
 
 	return client, ctx, nil
 }

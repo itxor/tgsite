@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/itxor/tgsite/internal/model"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strconv"
 )
 
 type PostMongo struct {
@@ -12,16 +13,24 @@ type PostMongo struct {
 }
 
 // NewPostMongo создаёт новый экземпляр PostMongo
-func NewPostMongo(db *mongo.Client, ctx context.Context) *PostMongo {
+func NewPostMongo(ctx context.Context, db *mongo.Client) *PostMongo {
 	return &PostMongo{
-		db: db,
 		ctx: ctx,
+		db: db,
 	}
 }
 
 // CreatePost сохраняет пост в базу
 func (s *PostMongo) CreatePost(post model.ChannelPost) (*mongo.InsertOneResult, error) {
-	collection := s.db.Database(Database).Collection(CollectionPosts)
+	chatId := post.ChatId
+	if chatId < 0 {
+		chatId = chatId * -1
+	}
+
+	collection := s.db.
+		Database(Database).
+		Collection(strconv.Itoa(chatId))
+
 	insertResult, err := collection.InsertOne(s.ctx, post)
 	if err != nil {
 		return nil, err

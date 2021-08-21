@@ -12,9 +12,9 @@ import (
 )
 
 type TelegramChannelService struct {
-	bot *tgbot.BotAPI
+	bot    *tgbot.BotAPI
 	config *config.TelegramConfig
-	repo repository.Repository
+	repo   repository.Repository
 }
 
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
@@ -34,9 +34,9 @@ func NewTelegramChannelService(repository repository.Repository) (*TelegramChann
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	return &TelegramChannelService{
-		bot: bot,
+		bot:    bot,
 		config: cfg,
-		repo: repository,
+		repo:   repository,
 	}, nil
 }
 
@@ -76,44 +76,59 @@ func (s *TelegramChannelService) handleMessage(message tgbot.Update) error {
 		return nil
 	}
 
+	post, err := s.parseMessage(*message.ChannelPost)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.repo.Post.CreatePost(*post)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// parseMessage парсит сообщение и возвращает стуктуру типа model.ChannelPost
+func (s *TelegramChannelService) parseMessage(message tgbot.Message) (*model.ChannelPost, error) {
 	post := new(model.ChannelPost)
 	var err error
 
-	if "" != message.ChannelPost.Text {
-		post.Content.Text = message.ChannelPost.Text
+	post.MessageId = message.MessageID
+	post.Date = message.Date
+	post.ChatId = int(message.Chat.ID)
+	post.ChatName = message.Chat.Title
+
+	if "" != message.Text {
+		post.Content.Text = message.Text
 	}
 
-	if message.ChannelPost.Entities != nil {
+	if message.Entities != nil {
 		post.Content.Options = s.getTextFormatting(message)
 	}
 
-	if message.ChannelPost.Sticker != nil {
+	if message.Sticker != nil {
 		post.Content.StickerURL, err = s.getStickerURL(message)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	if message.ChannelPost.Voice != nil {
+	if message.Voice != nil {
 		post.Content.VoiceURL, err = s.getVoiceURL(message)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	if message.ChannelPost.Photo != nil {
+	if message.Photo != nil {
 		post.Content.Photo, err = s.getPhoto(message)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	//_, err = s.repo.CreatePost(*post)
-	//if err != nil {
-	//	return err
-	//}
-
-	return nil
+	return post, nil
 }
 
 // getFileLink получает ссылку на файл
@@ -129,8 +144,8 @@ func (s *TelegramChannelService) getFileLink(fileID string) (string, error) {
 }
 
 // getStickerURL возвращает ссылку на стикер
-func (s *TelegramChannelService) getStickerURL(message tgbot.Update) (string, error) {
-	link, err := s.getFileLink(message.ChannelPost.Sticker.FileID)
+func (s *TelegramChannelService) getStickerURL(message tgbot.Message) (string, error) {
+	link, err := s.getFileLink(message.Sticker.FileID)
 	if err != nil {
 		msg := fmt.Sprintf("Не удалось получить ссылку на стикер: %v", err)
 		log.Printf(msg)
@@ -142,8 +157,8 @@ func (s *TelegramChannelService) getStickerURL(message tgbot.Update) (string, er
 }
 
 // getVoiceURL возвращает ссылку на звуковое сообщение
-func (s *TelegramChannelService) getVoiceURL(message tgbot.Update) (string, error) {
-	link, err := s.getFileLink(message.ChannelPost.Voice.FileID)
+func (s *TelegramChannelService) getVoiceURL(message tgbot.Message) (string, error) {
+	link, err := s.getFileLink(message.Voice.FileID)
 	if err != nil {
 		msg := fmt.Sprintf("Не удалось получить ссылку на звуковое соообщение: %v", err)
 		log.Printf(msg)
@@ -155,9 +170,9 @@ func (s *TelegramChannelService) getVoiceURL(message tgbot.Update) (string, erro
 }
 
 // getTextFormatting возвращает массив с набором форматирования текста
-func (s *TelegramChannelService) getTextFormatting(message tgbot.Update) []model.Formatting {
-	options := make([]model.Formatting, len(*(message.ChannelPost.Entities)))
-	for _, entity := range *(message.ChannelPost.Entities) {
+func (s *TelegramChannelService) getTextFormatting(message tgbot.Message) []model.Formatting {
+	options := make([]model.Formatting, len(*(message.Entities)))
+	for _, entity := range *(message.Entities) {
 		option := model.Formatting{
 			FormattingType: entity.Type,
 			Offset:         entity.Offset,
@@ -170,9 +185,9 @@ func (s *TelegramChannelService) getTextFormatting(message tgbot.Update) []model
 }
 
 // getPhoto возвращает набор изображения в нескольких отресайзенных копиях
-func (s *TelegramChannelService) getPhoto(message tgbot.Update) ([]model.Photo, error) {
-	photos := make([]model.Photo, len(*(message.ChannelPost.Photo)))
-	for _, entity := range *(message.ChannelPost.Photo) {
+func (s *TelegramChannelService) getPhoto(message tgbot.Message) ([]model.Photo, error) {
+	photos := make([]model.Photo, len(*(message.Photo)))
+	for _, entity := range *(message.Photo) {
 		link, err := s.getFileLink(entity.FileID)
 		if err != nil {
 			msg := fmt.Sprintf("Не удалось получить ссылку на изображение: %s", err.Error())

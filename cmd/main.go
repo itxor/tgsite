@@ -12,6 +12,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err != nil {
+		os.Exit(1)
+	}
+
 	s, err := service.NewService(
 		repository.NewRepository(db, ctx),
 	)
