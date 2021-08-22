@@ -48,10 +48,12 @@ func (s *TelegramChannelService) StartUpdatesLoop() error {
 	}
 
 	for update := range updatesChannel {
-		err := s.handleMessage(update)
-		if err != nil {
-			return err
-		}
+		go func(update tgbot.Update) {
+			err := s.handleMessage(update)
+			if err != nil {
+				log.Printf("Ошибка при попытке обработать сообщение из telegram: %s", err.Error())
+			}
+		}(update)
 	}
 
 	return nil
