@@ -10,8 +10,12 @@ const (
 	Database = "channels"
 )
 
+type ChannelRepository interface {
+	Add1()
+}
+
 type Post interface {
-	CreatePost(post model.ChannelPost) (*mongo.InsertOneResult, error)
+	Add(post model.ChannelPost) (*mongo.InsertOneResult, error)
 }
 
 type Repository struct {

@@ -27,7 +27,7 @@ func main() {
 	srv := new(internal.Server)
 
 	go func () {
-		if err := services.Channel.StartUpdatesLoop(); err != nil {
+		if err := services.Telegram.StartUpdatesLoop(); err != nil {
 			logrus.Fatalf(err.Error())
 		}
 	}()

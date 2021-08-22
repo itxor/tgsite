@@ -21,7 +21,7 @@ func NewPostMongo(ctx context.Context, db *mongo.Client) *PostMongo {
 }
 
 // CreatePost сохраняет пост в базу
-func (s *PostMongo) CreatePost(post model.ChannelPost) (*mongo.InsertOneResult, error) {
+func (s *PostMongo) Add(post model.ChannelPost) (*mongo.InsertOneResult, error) {
 	chatId := post.ChatId
 	if chatId < 0 {
 		chatId = chatId * -1
