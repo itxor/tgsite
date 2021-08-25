@@ -1,6 +1,5 @@
 .idea
 .env
-main
 configs/database.toml
 configs/telegram.toml
-./main
+bin

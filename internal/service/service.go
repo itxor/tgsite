@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/itxor/tgsite/internal/model"
 	"github.com/itxor/tgsite/internal/repository"
 )
 
@@ -19,21 +20,20 @@ type Channel interface {
 }
 
 type Post interface {
+	Add(*model.ChannelPost) error
 	List()
-	Add()
 	Delete()
 	Update()
 }
 
 type Service struct {
-	Telegram
 	Channel
 	Post
+	Telegram
 }
 
 func NewService(repo repository.Repository) (*Service, error) {
-	channelService := NewChannelService(repo)
-	tgChannelService, err := NewTelegramChannelService(repo, channelService)
+	tgChannelService, err := NewTelegramChannelService(repo)
 	if err != nil {
 		msg := fmt.Sprintf("Error initialize TelegramChannelService")
 
@@ -42,6 +42,6 @@ func NewService(repo repository.Repository) (*Service, error) {
 
 	return &Service{
 		Telegram: tgChannelService,
+		Post:     NewPostService(repo),
 	}, nil
 }
-

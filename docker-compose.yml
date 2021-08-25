@@ -52,6 +52,27 @@ services:
     networks:
       - app
 
+  nats:
+    image: nats:2.3.4-alpine
+    env_file:
+      - .env
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    container_name: nats
+    restart: always
+    networks:
+      - app
+
+  nats-web:
+    image: sphqxe/nats-webui
+    ports:
+      - "80:80"
+    container_name: nats-web
+    restart: always
+    networks:
+      - app
+
 networks:
   app:
     external: true

@@ -16,13 +16,11 @@ type TelegramChannelService struct {
 	config         *config.TelegramConfig
 	repo           repository.Repository
 	channelService Channel
+	postService    Post
 }
 
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
-func NewTelegramChannelService(
-	repository repository.Repository,
-	channelService Channel,
-) (*TelegramChannelService, error) {
+func NewTelegramChannelService(repository repository.Repository) (*TelegramChannelService, error) {
 	cfg, err := config.NewTelegramConfig()
 	if err != nil {
 		log.Printf("Ошибка при инициализации конфига: %v", err)
@@ -63,10 +61,9 @@ func (s *TelegramChannelService) StartUpdatesLoop() error {
 			}
 		}
 
-		//channel := post.ChatId
-		//if err := postService.Add(channel, *post); err != nil {
-		//	return err
-		//}
+		if err := s.postService.Add(post); err != nil {
+			return err
+		}
 	}
 
 	return nil

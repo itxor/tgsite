@@ -14,16 +14,16 @@ type ChannelRepository interface {
 	Add1()
 }
 
-type Post interface {
-	Add(post model.ChannelPost) (*mongo.InsertOneResult, error)
+type PostRepository interface {
+	Add(post *model.ChannelPost) error
 }
 
 type Repository struct {
-	Post
+	PostRepository
 }
 
 func NewRepository(db *mongo.Client, ctx context.Context) Repository {
 	return Repository{
-		Post: NewPostMongo(ctx, db),
+		PostRepository: NewPostMongo(ctx, db),
 	}
 }
