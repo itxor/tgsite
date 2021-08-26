@@ -2,11 +2,9 @@ package service
 
 import (
 	"github.com/itxor/tgsite/internal/model"
-	"github.com/itxor/tgsite/internal/repository"
 	"github.com/nats-io/nats.go"
 	"github.com/sirupsen/logrus"
 	"log"
-	"sync"
 )
 
 const (
@@ -14,19 +12,11 @@ const (
 )
 
 type Nats struct {
-	services Service
 	conn     *nats.EncodedConn
 }
 
 func NewNats() *Nats {
-	db, ctx, err := repository.NewMongoDB()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return &Nats{
-		services: *NewService(repository.NewRepository(db, ctx)),
-	}
+	return &Nats{}
 }
 
 func (s *Nats) ConnectToMessageBus() (func(), error) {
@@ -54,28 +44,14 @@ func (s *Nats) ConnectToMessageBus() (func(), error) {
 	return df, nil
 }
 
-func (s *Nats) SubscribeNewChannelPosts(wg *sync.WaitGroup) {
+func (s *Nats) GetChannelPostsChan() chan *model.ChannelPost {
 	ch := make(chan *model.ChannelPost)
 	_, err := s.conn.BindRecvChan(TopicNewPost, ch)
 	if err != nil {
-		return
+		return nil
 	}
 
-	for post := range ch {
-		// todo: логировать в отдельный файл журнала
-		logrus.Debug(post)
-		if !s.services.Channel.IsExists(post.ChatId) {
-			if err := s.services.Channel.Add(post.ChatId); err != nil {
-				logrus.Errorf("Ошибка при попытке создать канал: %s", err.Error())
-			}
-		}
-
-		if err := s.services.Post.Add(post); err != nil {
-			logrus.Errorf("Ошибка при попытке добавить новый пост: %s", err.Error())
-		}
-	}
-
-	wg.Done()
+	return ch
 }
 
 func (s *Nats) PublishNewPost(post *model.ChannelPost) error {

@@ -20,7 +20,6 @@ func NewPostMongo(ctx context.Context, db *mongo.Client) *PostMongo {
 	}
 }
 
-// CreatePost сохраняет пост в базу
 func (s *PostMongo) Add(post *model.ChannelPost) error {
 	chatId := post.ChatId
 	if chatId < 0 {
@@ -28,7 +27,7 @@ func (s *PostMongo) Add(post *model.ChannelPost) error {
 	}
 
 	collection := s.db.
-		Database(Database).
+		Database(DatabaseChannels).
 		Collection(strconv.Itoa(chatId))
 
 	_, err := collection.InsertOne(s.ctx, post)

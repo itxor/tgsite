@@ -20,14 +20,10 @@ type TelegramChannelService struct {
 	bot    *tgbot.BotAPI
 	config *config.TelegramConfig
 	repo   repository.Repository
-	nats   *Nats
 }
 
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
-func NewTelegramChannelService(
-	repository repository.Repository,
-	nats *Nats,
-) (*TelegramChannelService, error) {
+func NewTelegramChannelService(repository repository.Repository) (*TelegramChannelService, error) {
 	cfg, err := config.NewTelegramConfig()
 	if err != nil {
 		log.Printf("Ошибка при инициализации конфига: %v", err)
@@ -46,22 +42,22 @@ func NewTelegramChannelService(
 		bot:    bot,
 		config: cfg,
 		repo:   repository,
-		nats:   nats,
 	}, nil
 }
 
 // StartUpdatesLoop запускает цикл прослушивания и обработки сообщений из telegram-каналов
 func (s *TelegramChannelService) StartUpdatesLoop() error {
+	nats := NewNats()
+	df, err := nats.ConnectToMessageBus()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer df()
+
 	updatesChannel, err := s.getUpdates()
 	if err != nil {
 		os.Exit(1)
 	}
-
-	df, err := s.nats.ConnectToMessageBus()
-	if err != nil {
-		return err
-	}
-	defer df()
 
 	for update := range updatesChannel {
 		post, err := s.handleMessage(update)
@@ -69,7 +65,7 @@ func (s *TelegramChannelService) StartUpdatesLoop() error {
 			log.Printf("Ошибка при попытке обработать сообщение из telegram: %s", err.Error())
 		}
 
-		if err := s.nats.PublishNewPost(post); err != nil {
+		if err := nats.PublishNewPost(post); err != nil {
 			logrus.Error(err)
 		}
 	}

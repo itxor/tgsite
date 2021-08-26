@@ -12,7 +12,7 @@ type Service struct {
 }
 
 func NewService(repo repository.Repository) *Service {
-	tgChannelService, err := NewTelegramChannelService(repo, NewNats())
+	tgChannelService, err := NewTelegramChannelService(repo)
 	if err != nil {
 		log.Fatal(err)
 

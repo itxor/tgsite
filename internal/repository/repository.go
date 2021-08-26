@@ -7,23 +7,26 @@ import (
 )
 
 const (
-	Database = "channels"
+	DatabaseChannels = "channels"
 )
 
-type ChannelRepository interface {
-	Add1()
+type Channel interface {
+	IsExist(int) bool
+	Add(int) error
 }
 
-type PostRepository interface {
+type Post interface {
 	Add(post *model.ChannelPost) error
 }
 
 type Repository struct {
-	PostRepository
+	Post
+	Channel
 }
 
 func NewRepository(db *mongo.Client, ctx context.Context) Repository {
 	return Repository{
-		PostRepository: NewPostMongo(ctx, db),
+		Post:    NewPostMongo(ctx, db),
+		Channel: NewChannelMongo(ctx, db),
 	}
 }

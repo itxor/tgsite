@@ -21,7 +21,7 @@ func NewPostService(repo repository.Repository) *PostService {
 }
 
 func (s *PostService) Add(post *model.ChannelPost) error {
-	return s.repo.PostRepository.Add(post)
+	return s.repo.Post.Add(post)
 }
 
 func (s *PostService) List() {

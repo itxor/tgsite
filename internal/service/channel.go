@@ -7,7 +7,7 @@ type Channel interface {
 	Add(int) error
 	Delete()
 	Update()
-	IsExists(int) bool
+	IsExist(int) bool
 }
 
 type ChannelService struct {
@@ -19,7 +19,7 @@ func NewChannelService(repo repository.Repository) Channel {
 }
 
 func (s *ChannelService) Add(chatId int) error {
-	return nil
+	return s.repo.Channel.Add(chatId)
 }
 
 func (s *ChannelService) List() {
@@ -34,6 +34,6 @@ func (s *ChannelService) Update() {
 
 }
 
-func (s *ChannelService) IsExists(chatId int) bool {
-	return true
+func (s *ChannelService) IsExist(chatId int) bool {
+	return s.repo.Channel.IsExist(chatId)
 }
