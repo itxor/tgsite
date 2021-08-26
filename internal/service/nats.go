@@ -2,45 +2,91 @@ package service
 
 import (
 	"github.com/itxor/tgsite/internal/model"
+	"github.com/itxor/tgsite/internal/repository"
 	"github.com/nats-io/nats.go"
 	"github.com/sirupsen/logrus"
 	"log"
+	"sync"
 )
 
 const (
 	TopicNewPost = "new_post"
 )
 
-func PublishNewPost(post *model.ChannelPost) error {
-	conn, deferFunc, err := Connect()
+type Nats struct {
+	services Service
+	conn     *nats.EncodedConn
+}
+
+func NewNats() *Nats {
+	db, ctx, err := repository.NewMongoDB()
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
-	defer deferFunc()
+
+	return &Nats{
+		services: *NewService(repository.NewRepository(db, ctx)),
+	}
+}
+
+func (s *Nats) ConnectToMessageBus() (func(), error) {
+	conn, deferFunc, err := connect()
+	if err != nil {
+		log.Fatal(err)
+
+		return nil, err
+	}
 
 	ec, err := nats.NewEncodedConn(conn, nats.JSON_ENCODER)
 	if err != nil {
 		log.Fatal(err)
-	}
-	defer ec.Close()
 
-	if err := ec.Publish(TopicNewPost, post); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	s.conn = ec
+
+	df := func() {
+		deferFunc()
+		ec.Close()
+	}
+
+	return df, nil
 }
 
-func SubscribeToNewPost() error {
-	_, f, err := Connect()
+func (s *Nats) SubscribeNewChannelPosts(wg *sync.WaitGroup) {
+	ch := make(chan *model.ChannelPost)
+	_, err := s.conn.BindRecvChan(TopicNewPost, ch)
 	if err != nil {
+		return
+	}
+
+	for post := range ch {
+		// todo: логировать в отдельный файл журнала
+		logrus.Debug(post)
+		if !s.services.Channel.IsExists(post.ChatId) {
+			if err := s.services.Channel.Add(post.ChatId); err != nil {
+				logrus.Errorf("Ошибка при попытке создать канал: %s", err.Error())
+			}
+		}
+
+		if err := s.services.Post.Add(post); err != nil {
+			logrus.Errorf("Ошибка при попытке добавить новый пост: %s", err.Error())
+		}
+	}
+
+	wg.Done()
+}
+
+func (s *Nats) PublishNewPost(post *model.ChannelPost) error {
+	if err := s.conn.Publish(TopicNewPost, post); err != nil {
 		return err
 	}
-	defer f()
+
 	return nil
 }
 
-func Connect() (*nats.Conn, func(), error) {
+func connect() (*nats.Conn, func(), error) {
 	nc, err := nats.Connect(
 		nats.DefaultURL,
 		nats.Name("Telegram channel parser message bus"),

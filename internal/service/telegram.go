@@ -7,20 +7,27 @@ import (
 	"github.com/itxor/tgsite/internal/config"
 	"github.com/itxor/tgsite/internal/model"
 	"github.com/itxor/tgsite/internal/repository"
+	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 )
 
+type Telegram interface {
+	StartUpdatesLoop() error
+}
+
 type TelegramChannelService struct {
-	bot            *tgbot.BotAPI
-	config         *config.TelegramConfig
-	repo           repository.Repository
-	channelService Channel
-	postService    Post
+	bot    *tgbot.BotAPI
+	config *config.TelegramConfig
+	repo   repository.Repository
+	nats   *Nats
 }
 
 // NewTelegramChannelService создаёт новый инстанс TelegramChannelService
-func NewTelegramChannelService(repository repository.Repository) (*TelegramChannelService, error) {
+func NewTelegramChannelService(
+	repository repository.Repository,
+	nats *Nats,
+) (*TelegramChannelService, error) {
 	cfg, err := config.NewTelegramConfig()
 	if err != nil {
 		log.Printf("Ошибка при инициализации конфига: %v", err)
@@ -39,6 +46,7 @@ func NewTelegramChannelService(repository repository.Repository) (*TelegramChann
 		bot:    bot,
 		config: cfg,
 		repo:   repository,
+		nats:   nats,
 	}, nil
 }
 
@@ -49,20 +57,20 @@ func (s *TelegramChannelService) StartUpdatesLoop() error {
 		os.Exit(1)
 	}
 
+	df, err := s.nats.ConnectToMessageBus()
+	if err != nil {
+		return err
+	}
+	defer df()
+
 	for update := range updatesChannel {
 		post, err := s.handleMessage(update)
 		if err != nil {
 			log.Printf("Ошибка при попытке обработать сообщение из telegram: %s", err.Error())
 		}
 
-		if !s.channelService.IsExists(post.ChatId) {
-			if err := s.channelService.Add(post.ChatId); err != nil {
-				return err
-			}
-		}
-
-		if err := s.postService.Add(post); err != nil {
-			return err
+		if err := s.nats.PublishNewPost(post); err != nil {
+			logrus.Error(err)
 		}
 	}
 

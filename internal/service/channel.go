@@ -2,6 +2,14 @@ package service
 
 import "github.com/itxor/tgsite/internal/repository"
 
+type Channel interface {
+	List()
+	Add(int) error
+	Delete()
+	Update()
+	IsExists(int) bool
+}
+
 type ChannelService struct {
 	repo repository.Repository
 }
