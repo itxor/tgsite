@@ -5,6 +5,7 @@ import (
 	"github.com/itxor/tgsite/internal"
 	"github.com/itxor/tgsite/internal/handler"
 	"github.com/itxor/tgsite/internal/repository"
+	"github.com/itxor/tgsite/internal/repository/mongo"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	db, ctx, err := repository.NewMongoDB()
+	db, ctx, err := mongo.NewMongoDB()
 	if err != nil {
 		logrus.Fatalf(err.Error())
 	}

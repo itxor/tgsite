@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/itxor/tgsite/internal/repository"
+	"github.com/itxor/tgsite/internal/repository/mongo"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
 	"sync"
@@ -15,7 +16,7 @@ type subscriberDTO struct {
 }
 
 func main() {
-	db, ctx, err := repository.NewMongoDB()
+	db, ctx, err := mongo.NewMongoDB()
 	if err != nil {
 		logrus.Fatal(err)
 	}

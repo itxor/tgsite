@@ -1,8 +1,9 @@
-package repository
+package mongo
 
 import (
 	"context"
 	"github.com/itxor/tgsite/internal/model"
+	"github.com/itxor/tgsite/internal/repository"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 )
@@ -27,7 +28,7 @@ func (s *PostMongo) Add(post *model.ChannelPost) error {
 	}
 
 	collection := s.db.
-		Database(DatabaseChannels).
+		Database(repository.DatabaseChannels).
 		Collection(strconv.Itoa(chatId))
 
 	_, err := collection.InsertOne(s.ctx, post)
