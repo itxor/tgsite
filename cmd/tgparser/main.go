@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/itxor/tgsite/internal"
+	"github.com/itxor/tgsite/internal/handler"
 	"github.com/itxor/tgsite/internal/repository"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
@@ -15,24 +17,24 @@ func main() {
 	if err != nil {
 		logrus.Fatalf(err.Error())
 	}
-
-	services := service.NewService(
-		repository.NewRepository(db, ctx),
+	repo := repository.NewRepository(db, ctx)
+	handlers := handler.NewHandler(
+		service.NewAPIServices(repo),
 	)
-	//handlers := handler.NewHandler(services)
-	//srv := new(internal.Server)
+	srv := new(internal.Server)
 
-	go func () {
-		if err := services.Telegram.StartUpdatesLoop(); err != nil {
-			logrus.Fatalf(err.Error())
+	go func() {
+		if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
+			logrus.Fatalf("%s", err.Error())
 		}
 	}()
 
-	//go func() {
-	//	if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
-	//		logrus.Fatalf("%s", err.Error())
-	//	}
-	//}()
+	parserServices := service.NewTelegramParserService(repo)
+	go func () {
+		if err := parserServices.StartUpdatesLoop(); err != nil {
+			logrus.Fatalf(err.Error())
+		}
+	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
@@ -42,7 +44,7 @@ func main() {
 		logrus.Fatalf(err.Error())
 	}
 
-	//if err := srv.Shutdown(context.Background()); err != nil {
-	//	logrus.Fatalf(err.Error())
-	//}
+	if err := srv.Shutdown(context.Background()); err != nil {
+		logrus.Fatalf(err.Error())
+	}
 }

@@ -2,25 +2,30 @@ package service
 
 import (
 	"github.com/itxor/tgsite/internal/repository"
-	"log"
+	"github.com/sirupsen/logrus"
 )
 
-type Service struct {
+type ApiServices struct {
 	Channel
 	Post
+}
+
+type TelegramParserService struct {
 	Telegram
 }
 
-func NewService(repo repository.Repository) *Service {
-	tgChannelService, err := NewTelegramChannelService(repo)
+func NewTelegramParserService(repo repository.Repository) *TelegramParserService {
+	telegramService, err := NewTelegramChannelService(repo)
 	if err != nil {
-		log.Fatal(err)
-
-		return nil
+		logrus.Fatal(err)
 	}
 
-	return &Service{
-		Telegram: tgChannelService,
-		Post:     NewPostService(repo),
+	return &TelegramParserService{telegramService}
+}
+
+func NewAPIServices(repo repository.Repository) *ApiServices {
+	return &ApiServices{
+		Post:    NewPostService(repo),
+		Channel: NewChannelService(repo),
 	}
 }

@@ -12,7 +12,7 @@ const (
 )
 
 type Nats struct {
-	conn     *nats.EncodedConn
+	conn *nats.EncodedConn
 }
 
 func NewNats() *Nats {
