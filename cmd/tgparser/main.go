@@ -5,7 +5,6 @@ import (
 	"github.com/itxor/tgsite/internal"
 	"github.com/itxor/tgsite/internal/handler"
 	"github.com/itxor/tgsite/internal/repository"
-	"github.com/itxor/tgsite/internal/repository/mongo"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -14,7 +13,7 @@ import (
 )
 
 func main() {
-	db, ctx, err := mongo.NewMongoDB()
+	db, ctx, err := repository.NewMongoDB()
 	if err != nil {
 		logrus.Fatalf(err.Error())
 	}
@@ -30,16 +29,15 @@ func main() {
 		}
 	}()
 
-	parserServices := service.NewTelegramParserService(repo)
-	go func () {
-		if err := parserServices.StartUpdatesLoop(); err != nil {
+	go func() {
+		if err := service.NewTelegramParserService(repo).StartUpdatesLoop(); err != nil {
 			logrus.Fatalf(err.Error())
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-	<- quit
+	<-quit
 
 	if err := db.Disconnect(context.Background()); err != nil {
 		logrus.Fatalf(err.Error())

@@ -2,21 +2,26 @@ package main
 
 import (
 	"github.com/itxor/tgsite/internal/repository"
-	"github.com/itxor/tgsite/internal/repository/mongo"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
 	"sync"
 )
 
 type subscriberDTO struct {
-	wg *sync.WaitGroup
+	wg             *sync.WaitGroup
 	channelService service.Channel
-	postService service.Post
-	nats *service.Nats
+	postService    service.Post
+	nats           *service.Nats
 }
 
+var (
+	subscriberFuncs = []func(dto *subscriberDTO){
+		subscribeToNewChannelPosts,
+	}
+)
+
 func main() {
-	db, ctx, err := mongo.NewMongoDB()
+	db, ctx, err := repository.NewMongoDB()
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -32,16 +37,18 @@ func main() {
 	defer df()
 
 	wg := new(sync.WaitGroup)
-	wg.Add(1)
 
 	dto := &subscriberDTO{
-		wg:       wg,
+		wg:             wg,
 		channelService: channelService,
-		postService: postService,
-		nats:     nats,
+		postService:    postService,
+		nats:           nats,
 	}
 
-	go subscribeToNewChannelPosts(dto)
+	for _, subFunc := range subscriberFuncs {
+		wg.Add(1)
+		go subFunc(dto)
+	}
 
 	wg.Wait()
 }
@@ -64,4 +71,3 @@ func subscribeToNewChannelPosts(dto *subscriberDTO) {
 
 	dto.wg.Done()
 }
-

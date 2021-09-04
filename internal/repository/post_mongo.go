@@ -1,15 +1,14 @@
-package mongo
+package repository
 
 import (
 	"context"
 	"github.com/itxor/tgsite/internal/model"
-	"github.com/itxor/tgsite/internal/repository"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 )
 
 type PostMongo struct {
-	db *mongo.Client
+	db  *mongo.Client
 	ctx context.Context
 }
 
@@ -17,7 +16,7 @@ type PostMongo struct {
 func NewPostMongo(ctx context.Context, db *mongo.Client) *PostMongo {
 	return &PostMongo{
 		ctx: ctx,
-		db: db,
+		db:  db,
 	}
 }
 
@@ -28,7 +27,7 @@ func (s *PostMongo) Add(post *model.ChannelPost) error {
 	}
 
 	collection := s.db.
-		Database(repository.DatabaseChannels).
+		Database(DatabaseChannels).
 		Collection(strconv.Itoa(chatId))
 
 	_, err := collection.InsertOne(s.ctx, post)
@@ -38,5 +37,3 @@ func (s *PostMongo) Add(post *model.ChannelPost) error {
 
 	return nil
 }
-
-

@@ -1,8 +1,7 @@
-package mongo
+package repository
 
 import (
 	"context"
-	"github.com/itxor/tgsite/internal/repository"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,18 +10,18 @@ import (
 
 type ChannelMongo struct {
 	ctx context.Context
-	db *mongo.Client
+	db  *mongo.Client
 }
 
-func NewChannelMongo(ctx context.Context, db *mongo.Client) repository.Channel {
+func NewChannelMongo(ctx context.Context, db *mongo.Client) Channel {
 	return &ChannelMongo{
 		ctx: ctx,
-		db: db,
+		db:  db,
 	}
 }
 
 func (r *ChannelMongo) IsExist(chatId int) bool {
-	names, err := r.db.Database(repository.DatabaseChannels).ListCollectionNames(
+	names, err := r.db.Database(DatabaseChannels).ListCollectionNames(
 		context.Background(),
 		bson.D{},
 	)
@@ -40,5 +39,5 @@ func (r *ChannelMongo) IsExist(chatId int) bool {
 }
 
 func (r *ChannelMongo) Add(chatId int) error {
-	return r.db.Database(repository.DatabaseChannels).CreateCollection(r.ctx, strconv.Itoa(chatId))
+	return r.db.Database(DatabaseChannels).CreateCollection(r.ctx, strconv.Itoa(chatId))
 }
