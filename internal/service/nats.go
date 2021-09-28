@@ -9,6 +9,7 @@ import (
 
 const (
 	TopicNewPost = "new_post"
+	QueueNewPost = "queue_new_post"
 )
 
 type Nats struct {
@@ -46,7 +47,7 @@ func (s *Nats) ConnectToMessageBus() (func(), error) {
 
 func (s *Nats) GetChannelPostsChan() chan *model.ChannelPost {
 	ch := make(chan *model.ChannelPost)
-	_, err := s.conn.BindRecvChan(TopicNewPost, ch)
+	_, err := s.conn.BindRecvQueueChan(TopicNewPost, QueueNewPost, ch)
 	if err != nil {
 		return nil
 	}
