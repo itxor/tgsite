@@ -54,7 +54,6 @@ func main() {
 }
 
 func subscribeToNewChannelPosts(dto *subscriberDTO) {
-	logrus.Error("new post!")
 	for post := range dto.nats.GetChannelPostsChan() {
 		// todo: логировать в отдельный файл журнала, вывести уровень debug
 		logrus.Error(post)
