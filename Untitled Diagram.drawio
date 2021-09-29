@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-09-29T19:53:02.123Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36" etag="LUe8wgLQqr6mUesCzWM_" version="15.3.8" type="github">
+<mxfile host="app.diagrams.net" modified="2021-09-29T20:59:38.170Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36" etag="H9E9zOj2iYMSJemp6ayO" version="15.3.8" type="github">
   <diagram id="BzJQALIm-bLKbuEx7EXJ" name="Page-1">
     <mxGraphModel dx="994" dy="1052" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1700" math="0" shadow="0">
       <root>
@@ -21,6 +21,12 @@
         </mxCell>
         <mxCell id="sCeMcxhvW_etMQT8NY41-11" value="NATS-subscriber" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="15" y="260" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-13" target="RiHU0jShRidNuXHiCsRn-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-13" target="RiHU0jShRidNuXHiCsRn-59">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="RiHU0jShRidNuXHiCsRn-13" value="WEB-сервер" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="520" y="70" width="220" height="40" as="geometry" />
@@ -55,11 +61,29 @@
         <mxCell id="RiHU0jShRidNuXHiCsRn-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-48" target="RiHU0jShRidNuXHiCsRn-16">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-48" target="RiHU0jShRidNuXHiCsRn-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="RiHU0jShRidNuXHiCsRn-48" value="subscriber flow" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="70" y="404.5" width="160" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="RiHU0jShRidNuXHiCsRn-51" value="Сервис работы с&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="15" y="520" width="120" height="60" as="geometry" />
+        <mxCell id="RiHU0jShRidNuXHiCsRn-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-51" target="RiHU0jShRidNuXHiCsRn-55">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-51" value="Сервис работы с хостингом&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="520" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-53" value="REST-запрос на создание поддомена" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="700" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-55" value="Хостинг&lt;br&gt;API панели" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="860" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-59" target="RiHU0jShRidNuXHiCsRn-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-59" value="Браузер" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="590" y="239" width="80" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
