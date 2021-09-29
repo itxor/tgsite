@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-09-29T21:39:47.050Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36" etag="RIfjbo9JwUHO2X7Ni6oD" version="15.3.8" type="github">
+<mxfile host="app.diagrams.net" modified="2021-09-29T21:48:49.453Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36" etag="K_3O1uvr2z-7yV8U6NuB" version="15.3.8" type="github">
   <diagram id="BzJQALIm-bLKbuEx7EXJ" name="Page-1">
     <mxGraphModel dx="994" dy="1086" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1700" math="0" shadow="0">
       <root>
@@ -38,12 +38,16 @@
         <mxCell id="RiHU0jShRidNuXHiCsRn-55" value="Хостинг&lt;br&gt;API панели" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="815.06" y="60" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RiHU0jShRidNuXHiCsRn-138" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fillColor=#d5e8d4;strokeColor=#82b366;startArrow=none;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-121" target="RiHU0jShRidNuXHiCsRn-16">
+        <mxCell id="RiHU0jShRidNuXHiCsRn-156" style="edgeStyle=orthogonalEdgeStyle;shape=link;rounded=1;jumpStyle=none;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-69" target="RiHU0jShRidNuXHiCsRn-16">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="510" y="390" />
+              <mxPoint x="540" y="314" />
+              <mxPoint x="540" y="390" />
             </Array>
           </mxGeometry>
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-165" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpStyle=none;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-69" target="RiHU0jShRidNuXHiCsRn-164">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="RiHU0jShRidNuXHiCsRn-69" value="Сервис по работе с каналами" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="595.06" y="294" width="120" height="40" as="geometry" />
@@ -107,15 +111,6 @@
             <mxPoint x="240" y="317.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RiHU0jShRidNuXHiCsRn-121" value="Запись поста" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=0;glass=1;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="510" y="380" width="40" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="RiHU0jShRidNuXHiCsRn-140" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fillColor=#d5e8d4;strokeColor=#82b366;endArrow=none;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-69" target="RiHU0jShRidNuXHiCsRn-121">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="595.06" y="334" as="sourcePoint" />
-            <mxPoint x="440" y="390" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="RiHU0jShRidNuXHiCsRn-130" value="Запрос на создание, если нет сайта&lt;br&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=0;glass=1;dashed=1;" vertex="1" parent="1">
           <mxGeometry x="430.00000000000006" y="80" width="90" height="20" as="geometry" />
         </mxCell>
@@ -136,6 +131,33 @@
             <mxPoint x="149.05999999999995" y="120" as="sourcePoint" />
             <mxPoint x="155" y="280" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-154" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;jumpStyle=none;rounded=1;shape=link;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-147" target="RiHU0jShRidNuXHiCsRn-69">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-147" value="Основной бэк" style="rounded=1;whiteSpace=wrap;html=1;shadow=0;glass=1;strokeWidth=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="360" y="480" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-150" value="Работа с постами" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=0;glass=1;" vertex="1" parent="1">
+          <mxGeometry x="605.06" y="460" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-157" value="CRUD над постами" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=0;glass=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="350" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-160" style="edgeStyle=orthogonalEdgeStyle;shape=link;rounded=1;jumpStyle=none;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="RiHU0jShRidNuXHiCsRn-159" target="RiHU0jShRidNuXHiCsRn-147">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-159" value="Клиент" style="rounded=1;whiteSpace=wrap;html=1;shadow=0;glass=1;strokeWidth=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="335" y="700" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-161" value="REST" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=0;glass=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="620" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-164" value="ElasticSearch" style="rounded=1;whiteSpace=wrap;html=1;shadow=0;glass=1;strokeWidth=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="750" y="186.25" width="164.94" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="RiHU0jShRidNuXHiCsRn-166" value="Поиск постов" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=0;glass=1;" vertex="1" parent="1">
+          <mxGeometry x="795.06" y="280" width="40" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
