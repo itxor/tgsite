@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/itxor/tgsite/internal"
 	"github.com/itxor/tgsite/internal/handler"
 	"github.com/itxor/tgsite/internal/repository"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {

@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"strconv"
 )
 
 type ChannelMongo struct {

@@ -1,10 +1,11 @@
 package main
 
 import (
+	"sync"
+
 	"github.com/itxor/tgsite/internal/repository"
 	"github.com/itxor/tgsite/internal/service"
 	"github.com/sirupsen/logrus"
-	"sync"
 )
 
 type subscriberDTO struct {
