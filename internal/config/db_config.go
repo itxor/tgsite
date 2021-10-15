@@ -2,8 +2,10 @@ package config
 
 import (
 	"errors"
-	"github.com/BurntSushi/toml"
+	"fmt"
 	"log"
+
+	"github.com/BurntSushi/toml"
 )
 
 type DatabaseConfig struct {
@@ -12,6 +14,8 @@ type DatabaseConfig struct {
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
 	var dbCong DatabaseConfig
+	hello := "test"
+	fmt.Print(hello)
 	_, err := toml.DecodeFile("configs/database.toml", &dbCong)
 	if err != nil {
 		log.Printf("Error for reading local config: %v", err)
