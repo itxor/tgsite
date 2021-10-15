@@ -28,7 +28,7 @@ func (s *PostMongo) Add(post *model.ChannelPost) error {
 	}
 
 	collection := s.db.
-		Database(Database).
+		Database(DatabaseChannels).
 		Collection(strconv.Itoa(chatId))
 
 	_, err := collection.InsertOne(s.ctx, post)
