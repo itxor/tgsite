@@ -1,25 +1,20 @@
-package service
+package nats
 
 import (
-	"github.com/itxor/tgsite/internal/model"
 	"github.com/nats-io/nats.go"
 	"github.com/sirupsen/logrus"
 	"log"
 )
 
-const (
-	TopicNewPost = "new_post"
-)
-
-type Nats struct {
-	conn     *nats.EncodedConn
+type client struct {
+	conn *nats.EncodedConn
 }
 
-func NewNats() *Nats {
-	return &Nats{}
+func NewClient() NatsClientInterface {
+	return &client{}
 }
 
-func (s *Nats) ConnectToMessageBus() (func(), error) {
+func (s *client) Connect() (func(), error) {
 	conn, deferFunc, err := connect()
 	if err != nil {
 		log.Fatal(err)
@@ -44,28 +39,14 @@ func (s *Nats) ConnectToMessageBus() (func(), error) {
 	return df, nil
 }
 
-func (s *Nats) PublishNewPost(post *model.ChannelPost) error {
-	if err := s.conn.Publish(TopicNewPost, post); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Nats) GetChannelForNewChannelPosts() chan *model.ChannelPost {
-	ch := make(chan *model.ChannelPost)
-	_, err := s.conn.BindRecvChan(TopicNewPost, ch)
-	if err != nil {
-		return nil
-	}
-
-	return ch
+func (s *client) GetConnect() *nats.EncodedConn {
+	return s.conn
 }
 
 func connect() (*nats.Conn, func(), error) {
 	nc, err := nats.Connect(
 		nats.DefaultURL,
-		nats.Name("Telegram channel parser message bus"),
+		nats.Name("Message bus"),
 		nats.ErrorHandler(func(conn *nats.Conn, subscription *nats.Subscription, err error) {
 			if subscription != nil {
 				logrus.Error(
