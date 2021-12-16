@@ -1,4 +1,4 @@
-package config
+package telegram
 
 import (
 	"errors"
@@ -11,9 +11,9 @@ type TelegramConfig struct {
 	TgBotUsername string `toml:"tg_bot_username"`
 }
 
-func NewTelegramConfig() (*TelegramConfig, error) {
+func NewTelegramConfig(path string) (*TelegramConfig, error) {
 	var tgCong TelegramConfig
-	_, err := toml.DecodeFile("configs/telegram.toml", &tgCong)
+	_, err := toml.DecodeFile(path, &tgCong)
 	if err != nil {
 		log.Printf("Error for reading local config: %v", err)
 

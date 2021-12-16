@@ -1,16 +1,15 @@
-package repository
+package mongo
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/itxor/tgsite/internal/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoDB() (*mongo.Client, context.Context, error) {
-	cfg, err := config.NewDatabaseConfig()
+func NewMongoDB() (context.Context, *mongo.Client, error) {
+	cfg, err := NewDatabaseConfig()
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при чтении конфига для подключения к mongodb: %s", err.Error())
 
@@ -32,5 +31,5 @@ func NewMongoDB() (*mongo.Client, context.Context, error) {
 		return nil, nil, errors.New(msg)
 	}
 
-	return client, ctx, nil
+	return ctx, client, nil
 }

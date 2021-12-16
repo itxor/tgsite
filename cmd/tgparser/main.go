@@ -1,48 +1,33 @@
 package main
 
 import (
-	"context"
-	"github.com/itxor/tgsite/internal"
-	"github.com/itxor/tgsite/internal/handler"
-	"github.com/itxor/tgsite/internal/repository"
-	"github.com/itxor/tgsite/internal/service"
-	"github.com/sirupsen/logrus"
-	"os"
-	"os/signal"
-	"syscall"
+	"github.com/itxor/tgsite/internal/domains/post/repository"
+	"github.com/itxor/tgsite/internal/service/telegram"
+	"github.com/itxor/tgsite/pkg/mongo"
+	tg_client "github.com/itxor/tgsite/pkg/telegram"
+	"log"
 )
 
 func main() {
-	db, ctx, err := repository.NewMongoDB()
+	tgClient, err := tg_client.NewClient("")
 	if err != nil {
-		logrus.Fatalf(err.Error())
+		log.Fatal(err)
 	}
 
-	services := service.NewService(repository.NewRepository(db, ctx))
-	handlers := handler.NewHandler(services)
-	srv := new(internal.Server)
+	ctx, client, err := mongo.NewMongoDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	postRepo, err := repository.NewPostMongo(ctx, client)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tgUpdateService := telegram.NewUpdateLoopService(tgClient, postRepo)
 	go func() {
-		if err := services.Telegram.StartUpdatesLoop(); err != nil {
-			logrus.Fatalf(err.Error())
+		if err := tgUpdateService.StartUpdateLoop(); err != nil {
+			log.Fatal(err)
 		}
 	}()
-
-	go func() {
-		if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
-			logrus.Fatalf("%s", err.Error())
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-	<-quit
-
-	if err := db.Disconnect(context.Background()); err != nil {
-		logrus.Fatalf(err.Error())
-	}
-
-	if err := srv.Shutdown(context.Background()); err != nil {
-		logrus.Fatalf(err.Error())
-	}
 }

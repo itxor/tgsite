@@ -1,4 +1,25 @@
-package model
+package post
+
+import "github.com/itxor/tgsite/pkg/telegram"
+
+// Post определяет пост, отправленный в канал
+type Post struct {
+	MessageId int     `bson:"message_id"`
+	Date      int     `bson:"date"`
+	ChatId    int     `bson:"chat_id"`
+	Content   Content `bson:"post_contents"`
+	ChatName  string  `bson:"chat_name"`
+}
+
+type PostUserCaseInterface interface {
+	Add(post Post) error
+	BuildNewPostFromMessage(dto telegram.MessageDTO) (*Post, error)
+	DispatchAddPost(post Post) error
+}
+
+type PostRepositoryInterface interface {
+	Add(post Post) error
+}
 
 // Formatting определяет единицу форматированния переданного текста
 type Formatting struct {
@@ -15,20 +36,11 @@ type Photo struct {
 	FileSize int    `bson:"file_size"`
 }
 
-// PostContent определяет контент поста
-type PostContent struct {
+// Content определяет контент поста
+type Content struct {
 	Text       string       `bson:"text"`
 	Options    []Formatting `bson:"options"`
 	StickerURL string       `bson:"sticker_url"`
 	VoiceURL   string       `bson:"voice_url"`
 	Photo      []Photo      `bson:"photo"`
-}
-
-// ChannelPost определяет пост, отправленный в канал
-type ChannelPost struct {
-	MessageId int         `bson:"message_id"`
-	Date      int         `bson:"date"`
-	ChatId    int         `bson:"chat_id"`
-	Content   PostContent `bson:"post_contents"`
-	ChatName  string      `bson:"chat_name"`
 }
