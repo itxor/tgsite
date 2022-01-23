@@ -1,9 +1,10 @@
 package nats
 
 import (
+	"log"
+
 	"github.com/nats-io/nats.go"
 	"github.com/sirupsen/logrus"
-	"log"
 )
 
 type client struct {
@@ -37,6 +38,10 @@ func (s *client) Connect() (func(), error) {
 	}
 
 	return df, nil
+}
+
+func (s *client) Publish(subject string, value interface{}) error {
+	return s.conn.Publish(subject, value)
 }
 
 func (s *client) GetConnect() *nats.EncodedConn {

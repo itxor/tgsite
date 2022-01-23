@@ -1,17 +1,18 @@
 package nats
 
 import (
-	nats_client "github.com/itxor/tgsite/pkg/nats"
 	"log"
+
+	nats_client "github.com/itxor/tgsite/pkg/nats"
 )
 
 type tgUpdateService struct {
 	client nats_client.NatsClientInterface
 }
 
-func NewNatsTgUpdateService() NatsServiceForTelegramUpdateLoopInterface {
+func NewNatsTgUpdateService(client nats_client.NatsClientInterface) NatsServiceForTelegramUpdateLoopInterface {
 	return &tgUpdateService{
-		client: nats_client.NewClient(),
+		client: client,
 	}
 }
 
@@ -25,7 +26,7 @@ func (s *tgUpdateService) Dispatch(subject string, object interface{}) error {
 
 	defer defFunc()
 
-	if err := s.client.GetConnect().Publish(subject, object); err != nil {
+	if err := s.client.Publish(subject, object); err != nil {
 		log.Fatal(err)
 
 		return err
