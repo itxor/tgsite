@@ -3,8 +3,9 @@ package telegram
 import (
 	"errors"
 	"fmt"
-	tgbot "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+
+	tgbot "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type client struct {
@@ -47,11 +48,11 @@ func (s *client) GetUpdateChan() chan MessageDTO {
 	}
 
 	customCh := make(chan MessageDTO)
-	go func() {
+	go func(customCh chan MessageDTO, ch tgbot.UpdatesChannel) {
 		for update := range ch {
 			customCh <- s.transformUpdateToMessageDTO(update)
 		}
-	}()
+	}(customCh, ch)
 
 	return customCh
 }
@@ -95,28 +96,28 @@ func (s *client) getFileLink(fileID string) (string, error) {
 func (s *client) transformUpdateToMessageDTO(upd tgbot.Update) MessageDTO {
 	var stickerFileId, voiceFileId *string
 
-	if upd.ChannelPost.Sticker != nil {
-		stickerFileId = &upd.ChannelPost.Sticker.FileID
+	if upd.Message.Sticker != nil {
+		stickerFileId = &upd.Message.Sticker.FileID
 	} else {
 		stickerFileId = nil
 	}
 
-	if upd.ChannelPost.Voice != nil {
-		voiceFileId = &upd.ChannelPost.Voice.FileID
+	if upd.Message.Voice != nil {
+		voiceFileId = &upd.Message.Voice.FileID
 	} else {
 		voiceFileId = nil
 	}
 
 	return MessageDTO{
-		MessageID:     upd.ChannelPost.MessageID,
-		Date:          upd.ChannelPost.Date,
-		ChatID:        int(upd.ChannelPost.Chat.ID),
-		ChatTitle:     upd.ChannelPost.Chat.Title,
+		MessageID:     upd.Message.MessageID,
+		Date:          upd.Message.Date,
+		ChatID:        int(upd.Message.Chat.ID),
+		ChatTitle:     upd.Message.Chat.Title,
 		StickerFileID: stickerFileId,
 		VoiceFileID:   voiceFileId,
-		Text:          upd.ChannelPost.Text,
-		Entities:      s.transformEntities(upd.ChannelPost.Entities),
-		Photo:         s.transformPhotos(upd.ChannelPost.Photo),
+		Text:          upd.Message.Text,
+		Entities:      s.transformEntities(upd.Message.Entities),
+		Photo:         s.transformPhotos(upd.Message.Photo),
 	}
 }
 
