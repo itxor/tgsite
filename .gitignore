@@ -3,3 +3,4 @@
 configs/database.toml
 configs/telegram.toml
 bin
+.vimspector.json

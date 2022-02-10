@@ -17,3 +17,7 @@ func (s *service) Add(chatId int) error {
 func (s *service) IsExist(chatId int) bool {
 	return s.repository.IsExist(chatId)
 }
+
+func (s *service) FindAll() {
+
+}

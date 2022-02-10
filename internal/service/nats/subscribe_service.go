@@ -1,8 +1,7 @@
 package nats
 
 import (
-	"sync"
-
+	"context"
 	"github.com/itxor/tgsite/internal/domains/channel"
 	"github.com/itxor/tgsite/internal/domains/post"
 	nats_client "github.com/itxor/tgsite/pkg/nats"
@@ -26,42 +25,39 @@ func NewNatsPostSubscribeService(
 	}
 }
 
-func (s *postSubscribeService) SubscribeToNewPostQueue() error {
+func (s *postSubscribeService) SubscribeToNewPostQueue(ctx context.Context) error {
 	defFunc, err := s.client.Connect()
 	if err != nil {
 		logrus.Error(err)
+		return err
+	}
+	defer defFunc()
 
+	ch := make(chan post.Post)
+	_, err = s.client.GetConnect().BindRecvQueueChan(NewPostsSubject, NewPostsQueue, ch)
+	if err != nil {
+		logrus.Error(err)
 		return err
 	}
 
-	defer defFunc()
-
-	wg := sync.WaitGroup{}
 	for {
-		wg.Add(1)
-		if _, err := s.client.GetConnect().QueueSubscribe(
-			NewPostsSubject,
-			NewPostsQueue,
-			func(post post.Post) {
-				if !s.channelUseCase.IsExist(post.ChatId) {
-					if err := s.channelUseCase.Add(post.ChatId); err != nil {
-						logrus.Error(err)
-					}
-				}
+		select {
+		case <-ctx.Done():
+			return nil
+		case msgPost := <-ch:
+			logrus.Print(msgPost)
 
-				if err := s.postUseCase.Add(post); err != nil {
+			if !s.channelUseCase.IsExist(msgPost.ChatId) {
+				if err := s.channelUseCase.Add(msgPost.ChatId); err != nil {
 					logrus.Error(err)
 				}
+			}
 
-				wg.Done()
-			}); err != nil {
-			logrus.Error(err)
+			if err := s.postUseCase.Add(msgPost); err != nil {
+				logrus.Error(err)
+			}
 
-			continue
+			break
 		}
-
-		wg.Wait()
 	}
-
-	return nil
 }

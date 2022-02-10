@@ -1,5 +1,7 @@
 package nats
 
+import "context"
+
 const (
 	NewPostsSubject = "new_posts"
 
@@ -11,5 +13,5 @@ type NatsServiceForTelegramUpdateLoopInterface interface {
 }
 
 type NatsServiceForNewPostsSubscribersInterface interface {
-	SubscribeToNewPostQueue() error
+	SubscribeToNewPostQueue(context.Context) error
 }

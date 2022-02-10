@@ -50,6 +50,7 @@ func (s *client) GetUpdateChan() chan MessageDTO {
 	customCh := make(chan MessageDTO)
 	go func(customCh chan MessageDTO, ch tgbot.UpdatesChannel) {
 		for update := range ch {
+            fmt.Printf("%#v", update)
 			customCh <- s.transformUpdateToMessageDTO(update)
 		}
 	}(customCh, ch)

@@ -1,9 +1,11 @@
 package telegram
 
 import (
+	"context"
+	"github.com/sirupsen/logrus"
+
 	"github.com/itxor/tgsite/internal/domains/post"
 	"github.com/itxor/tgsite/pkg/telegram"
-	"github.com/sirupsen/logrus"
 )
 
 type UpdateLoopService struct {
@@ -22,20 +24,24 @@ func NewUpdateLoopService(
 }
 
 // StartUpdateLoop запускает цикл, получающий сообщения из бота и отправляющий их в брокер для дальнейшей обработки
-func (s *UpdateLoopService) StartUpdateLoop() error {
-	for message := range s.tg.GetUpdateChan() {
-		// вероятна стратегия, в случае, если в бот будут приходить не только сообщения, но и команды
-		newPost, err := s.postUseCase.BuildNewPostFromMessage(message)
-		if err != nil {
-			logrus.Error(err)
+func (s *UpdateLoopService) StartUpdateLoop(ctx context.Context) error {
+	for {
+		select {
+		case message := <-s.tg.GetUpdateChan():
+			newPost, err := s.postUseCase.BuildNewPostFromMessage(message)
+			if err != nil {
+				logrus.Error(err)
+				break
+			}
 
-			continue
-		}
+			if err := s.postUseCase.DispatchAddPost(*newPost); err != nil {
+				logrus.Error(err)
+				break
+			}
 
-		if err := s.postUseCase.DispatchAddPost(*newPost); err != nil {
-			logrus.Error(err)
-
-			continue
+			break
+		case <-ctx.Done():
+			return nil
 		}
 	}
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/itxor/tgsite/internal/domains/channel"
 	channel_repo "github.com/itxor/tgsite/internal/domains/channel/repository"
 	post_repo "github.com/itxor/tgsite/internal/domains/post/repository"
@@ -10,11 +11,26 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
-	"syscall"
+	"sync"
 )
 
 func main() {
-	ctx, client, err := mongo.NewMongoDB()
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		sigCh := make(chan os.Signal)
+		signal.Notify(sigCh, os.Interrupt)
+		for {
+			sig := <-sigCh
+			switch sig {
+			case os.Interrupt:
+				cancel()
+
+				return
+			}
+		}
+	}()
+
+	client, err := mongo.NewMongoDB(ctx)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -34,13 +50,15 @@ func main() {
 
 	natsService := nats.NewNatsPostSubscribeService(postUseCase, channelUseCase)
 
-	go func() {
-		if err := natsService.SubscribeToNewPostQueue(); err != nil {
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+
+		if err := natsService.SubscribeToNewPostQueue(ctx); err != nil {
 			logrus.Fatal(err)
 		}
-	}()
+	}(wg)
 
-	exit := make(chan os.Signal, 1)
-	signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
-	<-exit
+	wg.Wait()
 }
