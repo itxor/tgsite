@@ -10,7 +10,6 @@ import (
 )
 
 func NewMongoDB(ctx context.Context) (*mongo.Client, error) {
-	fmt.Print()
 	cfg, err := NewDatabaseConfig()
 	if err != nil {
 		msg := fmt.Sprintf("Ошибка при чтении конфига для подключения к mongodb: %s", err.Error())
