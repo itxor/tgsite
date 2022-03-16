@@ -51,6 +51,7 @@ func main() {
 	wg.Add(1)
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
+
 		if err := srv.Start(ctx); err != nil {
 			logrus.Error(err)
 

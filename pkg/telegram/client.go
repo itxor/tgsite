@@ -11,6 +11,8 @@ import (
 type client struct {
 	client *tgbot.BotAPI
 	config *TelegramConfig
+
+	ch *chan MessageDTO
 }
 
 func NewClient(path string) (TelegramClientInterface, error) {
@@ -40,6 +42,10 @@ func NewClient(path string) (TelegramClientInterface, error) {
 }
 
 func (s *client) GetUpdateChan() chan MessageDTO {
+	if s.ch != nil {
+		return *s.ch
+	}
+
 	ch, err := s.client.GetUpdatesChan(tgbot.UpdateConfig{})
 	if err != nil {
 		log.Fatal(err)
@@ -50,12 +56,13 @@ func (s *client) GetUpdateChan() chan MessageDTO {
 	customCh := make(chan MessageDTO)
 	go func(customCh chan MessageDTO, ch tgbot.UpdatesChannel) {
 		for update := range ch {
-            fmt.Printf("%#v", update)
+			fmt.Printf("%#v", update)
 			customCh <- s.transformUpdateToMessageDTO(update)
 		}
 	}(customCh, ch)
+	s.ch = &customCh
 
-	return customCh
+	return *s.ch
 }
 
 func (s *client) GetStickerURL(message MessageDTO) (string, error) {
