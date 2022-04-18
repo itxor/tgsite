@@ -41,6 +41,10 @@ func NewClient(path string) (TelegramClientInterface, error) {
 	}, nil
 }
 
+func (s *client) test() {
+	s.client.Get
+}
+
 func (s *client) GetUpdateChan() chan MessageDTO {
 	if s.ch != nil {
 		return *s.ch
